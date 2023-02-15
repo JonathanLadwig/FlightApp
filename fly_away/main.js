@@ -1,19 +1,37 @@
 import './styles.scss'
 import axios from "axios";
+import { latLng } from 'leaflet';
 
-var latitude = 80;
-var longitude = 1;
+var latitude = 0;
+var longitude = 0;
+const flightData = [];
 const apiurl = 'https://api.wheretheiss.at/v1/satellites/25544';
+const openskyURL = 'https://opensky-network.org/api/states/all';
+
+console.log("I am here");
+setPos();
+setISSPos();
 var map = L.map('map', {
     maxZoom: 10,
     minZoom: 2,
     zoomControl: false
 });
-getPos();
+var marker = L.marker([latitude, longitude]).addTo(map);
 drawMap(latitude,longitude);
 
+function setPos(){
+axios
+.get(openskyURL)
+.then((responseJSON) => {
+    for (const flight of responseJSON.data.states){
+        console.log(responseJSON.data.states[flight]);
+        flightData[flight] = responseJSON.data.states[flight];
+    }
+});
+}
+
 //API
-function getPos(){
+function setISSPos(){
 axios
 .get(apiurl)
 // .then((responseJSON) => console.log(responseJSON))
@@ -21,20 +39,17 @@ axios
     // for(flights of responseJSON.results){
         latitude = responseJSON.data.latitude;
         longitude = responseJSON.data.longitude;
-        console.log(latitude);
-        console.log(longitude);
         // drawMap(latitude, longitude)
     // }
     // document.getElementById('app').appendChild(flights)
-})
+});
 }
 // .catch((error) => console.error(error))
 
 //drawing the map
 function drawMap(latitude, longitude){
     map.setView([latitude, longitude], 5);
-
-    var marker = L.marker([latitude, longitude]).addTo(map);
+    marker = L.marker([latitude, longitude]).addTo(map);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -50,10 +65,11 @@ function drawMap(latitude, longitude){
 
 function redrawMap(latitude, longitude){
     map.setView([latitude, longitude], 5);
-    marker = L.marker([latitude, longitude]).addTo(map);
+    var latLng = new L.LatLng(latitude, longitude);
+    marker.setLatLng(latLng)
 }
 
 var intervalId = window.setInterval(function(){
-    getPos();
+    setISSPos();
     redrawMap(latitude, longitude);
-  }, 10000);
+  }, 1000);
