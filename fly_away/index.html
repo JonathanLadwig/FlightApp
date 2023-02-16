@@ -20,16 +20,19 @@
   <body>
     <script type="module" src="/main.js"></script>
 
+
     <div id="main">
-      <button id="sidebutt" onclick="openNav()">&#9776;</button>
+      <button id="sidebutt" onclick="openNav()">Open</button>
     </div>
 
   <!-- Sidebar Code From W3 Schools: www.w3schools.com/howto/howto_js_collapse_sidebar.asp -->
     <div id="mySidebar" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <a href="#">Flights</a>
+      <button>ISS</button>
     </div>
 
+    <!-- Open Sidebar Script -->
     <script>
 function openNav() {
     document.getElementById("mySidebar").style.width = "250px";

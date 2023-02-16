@@ -8,48 +8,51 @@ const flightData = [];
 const apiurl = 'https://api.wheretheiss.at/v1/satellites/25544';
 const openskyURL = 'https://opensky-network.org/api/states/all';
 
-console.log("I am here");
-setPos();
+//setPos();
 setISSPos();
+
 var map = L.map('map', {
     maxZoom: 10,
     minZoom: 2,
     zoomControl: false
 });
-var marker = L.marker([latitude, longitude]).addTo(map);
 drawMap(latitude,longitude);
+var markerISS = L.marker([latitude, longitude]).addTo(map).on('mouseover', onClick);
+markerISS.bindPopup("<b>ISS Location:</b>").openPopup();
 
+// OpenSkyAPI
 function setPos(){
 axios
 .get(openskyURL)
 .then((responseJSON) => {
-    for (const flight of responseJSON.data.states){
-        console.log(responseJSON.data.states[flight]);
-        flightData[flight] = responseJSON.data.states[flight];
+    // for (const flight of responseJSON.data.states){
+    //     console.log(responseJSON.data.states[flight]);
+    //     flightData[flight] = responseJSON.data.states[flight];
+    // }
+    for (var i = 0; i < 20; i++) {
+        console.log(responseJSON.data.states[i]);
+        flightData[i] = responseJSON.data.states[i];
+        marker = new L.marker([flightData[i].latitude, flightData[i].longitude])
+        .bindPopup(locations[i][0])
+        .addTo(map);
     }
 });
 }
 
-//API
+//ISSAPI
 function setISSPos(){
 axios
 .get(apiurl)
-// .then((responseJSON) => console.log(responseJSON))
 .then((responseJSON) => {
-    // for(flights of responseJSON.results){
         latitude = responseJSON.data.latitude;
         longitude = responseJSON.data.longitude;
-        // drawMap(latitude, longitude)
-    // }
-    // document.getElementById('app').appendChild(flights)
 });
 }
-// .catch((error) => console.error(error))
 
 //drawing the map
 function drawMap(latitude, longitude){
-    map.setView([latitude, longitude], 5);
-    marker = L.marker([latitude, longitude]).addTo(map);
+    map.setView([latitude, longitude], 2);
+    //markerISS = L.marker([latitude, longitude]).addTo(map);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -59,14 +62,18 @@ function drawMap(latitude, longitude){
         L.control.zoom({
             position: 'bottomright'
         }).addTo(map);
-
-    marker.bindPopup("<b>ISS Location:</b>").openPopup();
 }
 
+//redrawing the ISS
 function redrawMap(latitude, longitude){
-    map.setView([latitude, longitude], 5);
+    //map.setView([latitude, longitude], 5);
     var latLng = new L.LatLng(latitude, longitude);
-    marker.setLatLng(latLng)
+    markerISS.setLatLng(latLng)
+}
+
+//CLicking a marker
+function onClick(){
+    map.setView([latitude, longitude], 5); 
 }
 
 var intervalId = window.setInterval(function(){
