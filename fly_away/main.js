@@ -7,12 +7,14 @@ let issLong = 0;
 const flightData = [];
 const issUrl = "https://api.wheretheiss.at/v1/satellites/25544";
 const openskyURL = "https://opensky-network.org/api/states/all";
+const markers = [];
 
 const map = L.map("map", {
   maxZoom: 10,
   minZoom: 2,
   zoomControl: false,
 });
+
 drawMap();
 setMapMarkersOffline();
 // setupMapMarkers();
@@ -23,7 +25,8 @@ const markerISS = L.marker([issLat, issLong]);
 markerISS.addTo(map);
 markerISS.on("click", () => flyToISSOnClick());
 markerISS.bindPopup("<b>ISS Location:</b>");
-// .on("mouseover", openPopup(issLat, issLong));
+markerISS.on("mouseover", () => markerISS.openPopup());
+markerISS.on("mouseout", () => markerISS.closePopup());
 
 //Offline
 function setMapMarkersOffline() {
@@ -31,15 +34,22 @@ function setMapMarkersOffline() {
     flightData.push(backup.states[i]);
     if (backup.states[i][6] && backup.states[i][5]) {
       //Add it as a marker
-      L.marker([backup.states[i][6], backup.states[i][5]])
-        .addTo(map)
-        // .on("mouseover", onHover());
-        .on("click", () => flyToOnClick(this));
+      markers.push(
+        L.marker([backup.states[i][6], backup.states[i][5]])
+          .addTo(map)
+          .bindPopup(
+            `Callsign: ${backup.states[i][1]} <br/> Country:${backup.states[i][2]}`
+          )
+          .on("mouseover", () => markers[i].openPopup())
+          .on("mouseout", () => markers[i].closePopup())
+          .on("click", () =>
+            flyToOnClick(backup.states[i][6], backup.states[i][5], markers[i])
+          )
+      );
 
       //Add it as a button to the sidebar
       const flightButt = document.createElement("button");
       flightButt.innerText = `${backup.states[i][1]}`;
-      // flightButt.innerHTML = `<button class="flightbutt">${backup.states[i][1]};</button>`;
       flightButt.addEventListener("click", () =>
         getPosFromCallsign(flightButt.innerText)
       );
@@ -52,7 +62,7 @@ function setMapMarkersOffline() {
 function setupMapMarkers() {
   axios.get(openskyURL).then((responseJSON) => {
     for (let i = 0; i < 20; i++) {
-      flightData += responseJSON.data.states[i];
+      flightData.push(responseJSON.data.states[i]);
     }
   });
 }
@@ -91,34 +101,19 @@ function redrawISSMarker(issLat, issLong) {
 
 //Converts callsign into a lat and long for zoom function
 function getPosFromCallsign(callsign) {
-  console.log(callsign);
   for (let flight of flightData) {
-    console.log("next");
     if (flight && flight[1].includes(callsign)) {
-      console.log("called");
-      zoomIntoFlight(flight[6], flight[5], event);
-    } else {
+      flyToOnClick(flight[6], flight[5]);
     }
   }
 }
 
-//Zooms into map with lat and long on button click
-function zoomIntoFlight(latitude, longitude) {
-  console.log(latitude);
-  map.flyTo([latitude, longitude], 8);
+//CLicking a marker or button will zoom in on it
+function flyToOnClick(lat, long) {
+  map.flyTo([lat, long], 8);
 }
 
-//Hovering over a marker will display info about the flight
-// function onHover() {
-//   marker.bindPopup("<b>Plane:</b>").openPopup();
-// }
-
-//CLicking a marker will zoom in on it
-function flyToOnClick(latLong) {
-  console.log(latLong);
-  map.flyTo([issLat, issLong], 8);
-}
-
+//Fly to ISS Location
 function flyToISSOnClick() {
   map.flyTo([issLat, issLong], 8);
 }
