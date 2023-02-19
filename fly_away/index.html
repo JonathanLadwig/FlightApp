@@ -19,8 +19,7 @@
 
 <body>
   <div id="main">
-    <button id="sidebutt" onclick="openNav()">
-      .
+    <button id="sidebutt" title="open sidebar" onclick="openNav()">
       <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em"
         xmlns="http://www.w3.org/2000/svg">
         <path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path>
@@ -32,7 +31,7 @@
   <div id="mySidebar" class="sidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="#">Flight List:</a>
-    <button onclick="flyToISSOnClick()">ISS</button>
+    <button id="issButt" onclick="flyToISSOnClick()">ISS</button>
   </div>
 
   <script type="module" src="/main.js"></script>
@@ -42,12 +41,13 @@
     function openNav() {
       document.getElementById("mySidebar").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";
-      document.getElementById("sidebutt").style.color = 0, 0, 0, 0;
+      document.getElementById("sidebutt").style.color = "rgba(0, 0, 0, 0)";
     }
 
     function closeNav() {
       document.getElementById("mySidebar").style.width = "0";
       document.getElementById("main").style.marginLeft = "0";
+      document.getElementById("sidebutt").style.color = "rgba(0, 0, 0, 1)";
     }</script>
 
   <div id="map"></div>

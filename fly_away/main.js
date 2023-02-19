@@ -16,8 +16,8 @@ const map = L.map("map", {
 });
 
 drawMap();
-setMapMarkersOffline();
-// setupMapMarkers();
+//setMapMarkersOffline();
+setupMapMarkers();
 getISSPos();
 
 //ISS Marker
@@ -27,6 +27,8 @@ markerISS.on("click", () => flyToISSOnClick());
 markerISS.bindPopup("<b>ISS Location:</b>");
 markerISS.on("mouseover", () => markerISS.openPopup());
 markerISS.on("mouseout", () => markerISS.closePopup());
+
+redrawISSMarker(issLat, issLong);
 
 //Offline
 function setMapMarkersOffline() {
@@ -38,7 +40,7 @@ function setMapMarkersOffline() {
         L.marker([backup.states[i][6], backup.states[i][5]])
           .addTo(map)
           .bindPopup(
-            `Callsign: ${backup.states[i][1]} <br/> Country:${backup.states[i][2]}`
+            `Callsign: ${backup.states[i][1]} <br/> Country:${backup.states[i][2]}}`
           )
           .on("mouseover", () => markers[i].openPopup())
           .on("mouseout", () => markers[i].closePopup())
@@ -58,15 +60,40 @@ function setMapMarkersOffline() {
   }
 }
 
-// OpenSkyAPI IGNORE FOR NOW
+// OpenSkyAPI
 function setupMapMarkers() {
-  axios.get(openskyURL).then((responseJSON) => {
-    for (let i = 0; i < 20; i++) {
-      flightData.push(responseJSON.data.states[i]);
-    }
-  });
+  axios
+    .get(openskyURL)
+    .then((responseJSON) => {
+      for (let i = 0; i < 20; i++) {
+        flightData.push(responseJSON.data.states[i]);
+        if (flightData[i][6] && flightData[i][5]) {
+          //Add it as a marker
+          markers.push(
+            L.marker([flightData[i][6], flightData[i][5]])
+              .addTo(map)
+              .bindPopup(
+                `Callsign: ${flightData[i][1]} <br/> Origin:${flightData[i][2]}`
+              )
+              .on("mouseover", () => markers[i].openPopup())
+              .on("mouseout", () => markers[i].closePopup())
+              .on("click", () =>
+                flyToOnClick(flightData[i][6], flightData[i][5], markers[i])
+              )
+          );
+
+          //Add it as a button to the sidebar
+          const flightButt = document.createElement("button");
+          flightButt.innerText = `${flightData[i][1]}`;
+          flightButt.addEventListener("click", () =>
+            getPosFromCallsign(flightButt.innerText)
+          );
+          document.getElementById("mySidebar").appendChild(flightButt);
+        }
+      }
+    })
+    .catch((error) => console.error(error));
 }
-//IGNORE FOR NOW
 
 //ISSAPI position
 function getISSPos() {
@@ -122,4 +149,4 @@ function flyToISSOnClick() {
 var intervalId = window.setInterval(function () {
   getISSPos();
   redrawISSMarker(issLat, issLong);
-}, 5000);
+}, 2000);

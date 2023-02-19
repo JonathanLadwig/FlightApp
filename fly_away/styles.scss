@@ -17,6 +17,7 @@
   border: 0px;
   width: 2rem;
   height: 2rem;
+  font-size: 1.5rem;
   color: rgb(0, 0, 0);
   background-color: rgb(0, 0, 0, 0);
 }
@@ -26,10 +27,15 @@
   width: 30vw;
 }
 
+#issButt {
+  border-top: 2px solid;
+  border-color: gray;
+}
+
 #main {
   transition: margin-left 0.5s; /* If you want a transition effect */
-  width: 1vw;
-  height: 1vh;
+  width: 2vw;
+  height: 2vh;
   margin: 0px;
   background-color: rgb(0, 0, 0, 0);
   color: rgb(0, 0, 0, 0);
@@ -90,6 +96,12 @@
     width: 200px;
   }
   .sidebar button {
+    font-size: 2rem;
+  }
+  .sidebar a {
+    font-size: 2rem;
+  }
+  #sidebutt {
     font-size: 2rem;
   }
 }
