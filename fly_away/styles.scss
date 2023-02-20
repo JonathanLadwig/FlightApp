@@ -33,7 +33,7 @@
 }
 
 #main {
-  transition: margin-left 0.5s; /* If you want a transition effect */
+  transition: margin-left 0.5s;
   width: 2vw;
   height: 2vh;
   margin: 0px;
@@ -64,10 +64,10 @@
   }
 
   button {
-    border-top: none;
+    border-top: 2px solid;
     border-left: none;
     border-right: none;
-    border-bottom: 2px solid;
+    border-bottom: none;
     border-color: gray;
     padding: 8px 8px 8px 8px;
     text-align: center;
