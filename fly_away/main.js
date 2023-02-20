@@ -2,9 +2,6 @@ import * as issMod from "./issModule";
 import * as mapMod from "./mapModule";
 import "./styles.scss";
 
-const flightData = [];
-const openskyURL = "https://opensky-network.org/api/states/all";
-
 const map = mapMod.map;
 
 mapMod.drawMap(map);
