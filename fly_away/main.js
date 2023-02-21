@@ -5,14 +5,6 @@ import "./styles.scss";
 const map = mapMod.map;
 
 mapMod.drawMap(map);
-//mapMod.setMapMarkersOffline();
-mapMod.setupMapMarkers();
+//mapMod.setupMapMarkers();
+mapMod.setMapMarkersOffline();
 issMod.createISSMarker(map);
-issMod.getISSPos();
-issMod.redrawISSMarker();
-
-//Polling
-var intervalId = window.setInterval(function () {
-  issMod.getISSPos();
-  issMod.redrawISSMarker();
-}, 2000);

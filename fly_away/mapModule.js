@@ -1,5 +1,4 @@
 export {
-  map,
   setupMapMarkers,
   setMapMarkersOffline,
   drawMap,
@@ -14,7 +13,7 @@ const markers = [];
 const flightData = [];
 
 //Initialising the leaflet map
-const map = L.map("map", {
+export const map = L.map("map", {
   maxZoom: 10,
   minZoom: 2,
   zoomControl: false,
