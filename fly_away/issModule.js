@@ -6,8 +6,10 @@ const markerISS = L.marker([0, 0]);
 
 //get the history from local storage if it exists otherwise make an empty array
 const historyOfPos =
-  JSON.parse(localStorage.getItem("polyLine")).filter(
-    (latlng) => latlng[0] && latlng[1]
+  JSON.parse(
+    localStorage.getItem("polyLine")
+    // .filter(
+    //   (latlng) => latlng[0] && latlng[1]
   ) ?? [];
 let polyLine;
 
