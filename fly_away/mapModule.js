@@ -19,6 +19,16 @@ export const map = L.map("map", {
   zoomControl: false,
 });
 
+//OpenSkyAPI Subscriber
+// flightPositions$.subscribe((flightPos) => {
+//   for(flight of flightPos){
+//     if(flight){
+//       localStorage.setItem("flightInfoStore", JSON.stringify(flight));
+//       flightData.push(flight)
+//     }
+//   }
+// });
+
 // OpenSkyAPI
 function setupMapMarkers() {
   axios
@@ -28,26 +38,9 @@ function setupMapMarkers() {
         flightData.push(responseJSON.data.states[i]);
         if (flightData[i][6] && flightData[i][5]) {
           //Add it as a marker
-          markers.push(
-            L.marker([flightData[i][6], flightData[i][5]])
-              .addTo(map)
-              .bindPopup(
-                `Callsign: ${flightData[i][1]} <br/> Origin:${flightData[i][2]}`
-              )
-              .on("mouseover", () => markers[i].openPopup())
-              .on("mouseout", () => markers[i].closePopup())
-              .on("click", () =>
-                flyToOnClick(flightData[i][6], flightData[i][5], markers[i])
-              )
-          );
-
-          //Add it as a button to the sidebar
-          const flightButt = document.createElement("button");
-          flightButt.innerText = `${flightData[i][1]}`;
-          flightButt.addEventListener("click", () =>
-            getPosFromCallsign(flightButt.innerText)
-          );
-          document.getElementById("mySidebar").appendChild(flightButt);
+          setFlightMarkers(i);
+          //Add it as a button
+          createNewFlightButt(i);
         }
       }
     })
@@ -60,28 +53,37 @@ function setMapMarkersOffline() {
     flightData.push(backup.states[i]);
     if (backup.states[i][6] && backup.states[i][5]) {
       //Add it as a marker
-      markers.push(
-        L.marker([backup.states[i][6], backup.states[i][5]])
-          .addTo(map)
-          .bindPopup(
-            `Callsign: ${backup.states[i][1]} <br/> Origin:${backup.states[i][2]}`
-          )
-          .on("mouseover", () => markers[i].openPopup())
-          .on("mouseout", () => markers[i].closePopup())
-          .on("click", () =>
-            flyToOnClick(backup.states[i][6], backup.states[i][5])
-          )
-      );
-
-      //Add it as a button to the sidebar
-      const flightButt = document.createElement("button");
-      flightButt.innerText = `${backup.states[i][1]}`;
-      flightButt.addEventListener("click", () =>
-        getPosFromCallsign(flightButt.innerText, map)
-      );
-      document.getElementById("mySidebar").appendChild(flightButt);
+      setFlightMarkers(i);
+      //Add it as a button
+      createNewFlightButt(i);
     }
   }
+}
+
+//Flight Markers
+function setFlightMarkers(i) {
+  markers.push(
+    L.marker([flightData[i][6], flightData[i][5]])
+      .addTo(map)
+      .bindPopup(
+        `Callsign: ${flightData[i][1]} <br/> Origin:${flightData[i][2]}`
+      )
+      .on("mouseover", () => markers[i].openPopup())
+      .on("mouseout", () => markers[i].closePopup())
+      .on("click", () =>
+        flyToOnClick(flightData[i][6], flightData[i][5], markers[i])
+      )
+  );
+}
+
+//Add Flight as Button to Sidebar
+function createNewFlightButt(i) {
+  const flightButt = document.createElement("button");
+  flightButt.innerText = `${backup.states[i][1]}`;
+  flightButt.addEventListener("click", () =>
+    getPosFromCallsign(flightButt.innerText, map)
+  );
+  document.getElementById("mySidebar").appendChild(flightButt);
 }
 
 //drawing the map
