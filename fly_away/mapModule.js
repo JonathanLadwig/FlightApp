@@ -24,7 +24,6 @@ export const map = L.map("map", {
 flightPositions$.subscribe((flightPos) => {
   let failedCount = 0;
   for (let i = 0; i < 20; i++) {
-    console.log("i=" + i);
     //GUARD CLAUSE
     if (
       !flightPos.states[i] ||
@@ -34,11 +33,8 @@ flightPositions$.subscribe((flightPos) => {
       !flightPos.states[i][2]
     ) {
       failedCount += 1;
-      console.log("Failed:" + failedCount);
       continue;
     } else {
-      console.log(flightPos.states[i][6]);
-      console.log(flightPos.states[i][5]);
       //Add it to flight data
       flightData.push(flightPos.states[i]);
       //Add it to local storage
@@ -102,7 +98,7 @@ function setFlightMarkers(i) {
 //Add Flight as Button to Sidebar
 function createNewFlightButt(i) {
   const flightButt = document.createElement("button");
-  flightButt.innerText = `${backup.states[i][1]}`;
+  flightButt.innerText = `${flightData[i][1]}`;
   flightButt.addEventListener("click", () =>
     getPosFromCallsign(flightButt.innerText, map)
   );
