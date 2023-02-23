@@ -5,8 +5,6 @@ export {
   getPosFromCallsign,
   flyToOnClick,
 };
-import axios from "axios";
-import { backup } from "./flights";
 import { flightPositions$ } from "./issObs";
 
 const openskyURL = "https://opensky-network.org/api/states/all?";
@@ -43,38 +41,6 @@ flightPositions$.subscribe((flights) => {
     }
   }
 });
-
-// OpenSkyAPI
-function setupMapMarkers() {
-  axios
-    .get(openskyURL)
-    .then((responseJSON) => {
-      for (let i = 0; i < 20; i++) {
-        if (responseJSON.data[i][6] && responseJSON.data[i][5]) {
-          flightData.push(responseJSON.data[i]);
-          localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
-          //Add it as a marker
-          setFlightMarkers(i);
-          //Add it as a button
-          createNewFlightButt(i);
-        }
-      }
-    })
-    .catch((error) => console.error(error));
-}
-
-//Offline
-function setMapMarkersOffline() {
-  for (let i = 0; i < 20; i++) {
-    flightData.push(backup.states[i]);
-    if (backup.states[i][6] && backup.states[i][5]) {
-      //Add it as a marker
-      setFlightMarkers(i);
-      //Add it as a button
-      createNewFlightButt(i);
-    }
-  }
-}
 
 //Flight Markers
 function setFlightMarkers(flight, i) {
