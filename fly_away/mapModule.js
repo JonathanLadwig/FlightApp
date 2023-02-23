@@ -7,8 +7,9 @@ export {
 };
 import axios from "axios";
 import { backup } from "./flights";
+import { flightPositions$ } from "./issObs";
 
-const openskyURL = "https://opensky-network.org/api/states/all";
+const openskyURL = "https://opensky-network.org/api/states/all?";
 const markers = [];
 const flightData = [];
 
@@ -20,14 +21,35 @@ export const map = L.map("map", {
 });
 
 //OpenSkyAPI Subscriber
-// flightPositions$.subscribe((flightPos) => {
-//   for(flight of flightPos){
-//     if(flight){
-//       localStorage.setItem("flightInfoStore", JSON.stringify(flight));
-//       flightData.push(flight)
-//     }
-//   }
-// });
+flightPositions$.subscribe((flightPos) => {
+  let failedCount = 0;
+  for (let i = 0; i < 20; i++) {
+    console.log("i=" + i);
+    //GUARD CLAUSE
+    if (
+      !flightPos.states[i] ||
+      !flightPos.states[i][6] ||
+      !flightPos.states[i][5] ||
+      !flightPos.states[i][1] ||
+      !flightPos.states[i][2]
+    ) {
+      failedCount += 1;
+      console.log("Failed:" + failedCount);
+      continue;
+    } else {
+      console.log(flightPos.states[i][6]);
+      console.log(flightPos.states[i][5]);
+      //Add it to flight data
+      flightData.push(flightPos.states[i]);
+      //Add it to local storage
+      localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
+      //Add it as a marker
+      setFlightMarkers(i - failedCount);
+      //Add it as a button
+      createNewFlightButt(i - failedCount);
+    }
+  }
+});
 
 // OpenSkyAPI
 function setupMapMarkers() {
@@ -35,8 +57,9 @@ function setupMapMarkers() {
     .get(openskyURL)
     .then((responseJSON) => {
       for (let i = 0; i < 20; i++) {
-        flightData.push(responseJSON.data.states[i]);
-        if (flightData[i][6] && flightData[i][5]) {
+        if (responseJSON.data[i][6] && responseJSON.data[i][5]) {
+          flightData.push(responseJSON.data[i]);
+          localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
           //Add it as a marker
           setFlightMarkers(i);
           //Add it as a button
