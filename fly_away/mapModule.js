@@ -5,10 +5,9 @@ export {
   getPosFromCallsign,
   flyToOnClick,
 };
-import axios from "axios";
-import { backup } from "./flights";
+import { flightPositions$ } from "./issObs";
 
-const openskyURL = "https://opensky-network.org/api/states/all";
+const openskyURL = "https://opensky-network.org/api/states/all?";
 const markers = [];
 const flightData = [];
 
@@ -20,66 +19,45 @@ export const map = L.map("map", {
 });
 
 //OpenSkyAPI Subscriber
-// flightPositions$.subscribe((flightPos) => {
-//   for(flight of flightPos){
-//     if(flight){
-//       localStorage.setItem("flightInfoStore", JSON.stringify(flight));
-//       flightData.push(flight)
-//     }
-//   }
-// });
+flightPositions$.subscribe((flights) => {
+  let count = 0;
+  for (let flight of flights.states) {
+    //GUARD CLAUSE
+    if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
+      continue;
+    //Add it to flight data
+    flightData.push(flight);
+    //Add it to local storage
+    localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
+    //Add it as a marker
+    setFlightMarkers(flight, count);
+    //Add it as a button
+    createNewFlightButt(flight);
 
-// OpenSkyAPI
-function setupMapMarkers() {
-  axios
-    .get(openskyURL)
-    .then((responseJSON) => {
-      for (let i = 0; i < 20; i++) {
-        flightData.push(responseJSON.data.states[i]);
-        if (flightData[i][6] && flightData[i][5]) {
-          //Add it as a marker
-          setFlightMarkers(i);
-          //Add it as a button
-          createNewFlightButt(i);
-        }
-      }
-    })
-    .catch((error) => console.error(error));
-}
+    count += 1;
 
-//Offline
-function setMapMarkersOffline() {
-  for (let i = 0; i < 20; i++) {
-    flightData.push(backup.states[i]);
-    if (backup.states[i][6] && backup.states[i][5]) {
-      //Add it as a marker
-      setFlightMarkers(i);
-      //Add it as a button
-      createNewFlightButt(i);
+    if (count == 19) {
+      break;
     }
   }
-}
+});
 
 //Flight Markers
-function setFlightMarkers(i) {
+function setFlightMarkers(flight, i) {
   markers.push(
-    L.marker([flightData[i][6], flightData[i][5]])
+    L.marker([flight[6], flight[5]])
       .addTo(map)
-      .bindPopup(
-        `Callsign: ${flightData[i][1]} <br/> Origin:${flightData[i][2]}`
-      )
+      .bindPopup(`Callsign: ${flight[1]} <br/> Origin:${flight[2]}`)
       .on("mouseover", () => markers[i].openPopup())
       .on("mouseout", () => markers[i].closePopup())
-      .on("click", () =>
-        flyToOnClick(flightData[i][6], flightData[i][5], markers[i])
-      )
+      .on("click", () => flyToOnClick(flight[6], flight[5], markers[i]))
   );
 }
 
 //Add Flight as Button to Sidebar
-function createNewFlightButt(i) {
+function createNewFlightButt(flight) {
   const flightButt = document.createElement("button");
-  flightButt.innerText = `${backup.states[i][1]}`;
+  flightButt.innerText = `${flight[1]}`;
   flightButt.addEventListener("click", () =>
     getPosFromCallsign(flightButt.innerText, map)
   );
