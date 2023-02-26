@@ -1,6 +1,5 @@
 import { flightPositions$ } from "./observables";
 
-const openskyURL = "https://opensky-network.org/api/states/all?";
 let markers = [];
 let flightData = JSON.parse(localStorage.getItem("flightInfoStore"));
 
