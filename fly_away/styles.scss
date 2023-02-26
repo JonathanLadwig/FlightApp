@@ -61,6 +61,15 @@
   overflow-x: hidden;
   transition: 0.5s;
 
+  .closebtn {
+    align-self: flex-start;
+  }
+
+  .logo {
+    height: 64px;
+    width: 64px;
+  }
+
   a {
     padding: 8px 8px 8px 8px;
     text-decoration: none;
@@ -86,7 +95,7 @@
     width: 100%;
   }
 }
-
+//Mobile
 @media screen and (max-width: 600px) {
   #mySidebar {
     width: 30vw;
@@ -97,6 +106,7 @@
     }
   }
 }
+//PC
 @media screen and (min-width: 600px) {
   #mySidebar {
     width: 200px;
