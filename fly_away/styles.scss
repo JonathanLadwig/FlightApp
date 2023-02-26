@@ -49,55 +49,44 @@
 
 .sidebar {
   display: flex;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   flex-direction: column;
-  align-items: center;
   height: 100%;
   width: 0;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: navy;
+  background-color: white;
   overflow-x: hidden;
   transition: 0.5s;
-
-  .logo {
-    display: flex;
-    align-content: center;
-    width: 50px;
-    height: 50px;
-  }
 
   a {
     padding: 8px 8px 8px 8px;
     text-decoration: none;
     font-size: 1rem;
-    color: whitesmoke;
+    color: black;
     display: block;
     transition: 0.3s;
   }
 
-  .closebtn {
-    align-self: flex-start;
-  }
-
   button {
-    border: 1px solid;
-    border-color: whitesmoke;
+    border-top: 2px solid;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-color: gray;
     padding: 8px 8px 8px 8px;
     text-align: center;
     text-decoration: none;
     font-size: 1rem;
     color: black;
-    background-color: whitesmoke;
+    background-color: white;
     display: block;
     transition: 0.3s;
-    width: 24vw;
+    width: 100%;
   }
 }
 
-//Mobile
 @media screen and (max-width: 600px) {
   #mySidebar {
     width: 30vw;
@@ -105,21 +94,15 @@
   .sidebar {
     button {
       font-size: 1rem;
-      margin-top: 1rem;
-      border-radius: 2rem;
     }
   }
 }
-//PC
 @media screen and (min-width: 600px) {
   #mySidebar {
     width: 200px;
   }
   .sidebar button {
     font-size: 2rem;
-    margin-top: 1rem;
-    border-radius: 2rem;
-    width: 180px;
   }
   .sidebar a {
     font-size: 2rem;

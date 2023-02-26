@@ -1,6 +1,7 @@
 import { flightPositions$ } from "./observables";
 
-let markers = [];
+const openskyURL = "https://opensky-network.org/api/states/all?";
+const markers = [];
 let flightData = JSON.parse(localStorage.getItem("flightInfoStore"));
 
 //Initialising the leaflet map
@@ -9,23 +10,6 @@ export const map = L.map("map", {
   minZoom: 2,
   zoomControl: false,
 });
-
-//drawing the map
-function drawMap(map) {
-  map.setView([0, 0], 2);
-
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map);
-
-  L.control
-    .zoom({
-      position: "bottomright",
-    })
-    .addTo(map);
-}
 
 //FlightDataOffline
 function offlineFlightData() {
@@ -51,10 +35,8 @@ function offlineFlightData() {
 
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
-  console.log("hello");
   let count = 0;
   flightData = [];
-  markers = [];
   document.getElementById("buttList").innerHTML = ``;
   for (let flight of flights.states) {
     //GUARD CLAUSE
@@ -99,6 +81,23 @@ function createNewFlightButt(flight) {
   document.getElementById("buttList").appendChild(flightButt);
 }
 
+//drawing the map
+function drawMap(map) {
+  map.setView([0, 0], 2);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+
+  L.control
+    .zoom({
+      position: "bottomright",
+    })
+    .addTo(map);
+}
+
 //Converts callsign into a lat and long for zoom function
 function getPosFromCallsign(callsign) {
   for (let flight of flightData) {
@@ -113,4 +112,4 @@ function flyToOnClick(lat, long) {
   map.flyTo([lat, long], 8);
 }
 
-export { drawMap };
+export { drawMap, getPosFromCallsign, flyToOnClick, offlineFlightData };
