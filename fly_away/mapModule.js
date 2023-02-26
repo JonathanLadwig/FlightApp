@@ -1,7 +1,7 @@
 import { flightPositions$ } from "./observables";
 
 const openskyURL = "https://opensky-network.org/api/states/all?";
-const markers = [];
+let markers = [];
 let flightData = JSON.parse(localStorage.getItem("flightInfoStore"));
 
 //Initialising the leaflet map
@@ -14,6 +14,8 @@ export const map = L.map("map", {
 //FlightDataOffline
 function offlineFlightData() {
   let count = 0;
+  flightData = [];
+  markers = [];
   for (let flight of flightData) {
     //GUARD CLAUSE
     if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
