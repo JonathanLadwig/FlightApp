@@ -1,15 +1,8 @@
-export {
-  setupMapMarkers,
-  setMapMarkersOffline,
-  drawMap,
-  getPosFromCallsign,
-  flyToOnClick,
-};
-import { flightPositions$ } from "./issObs";
+import { flightPositions$ } from "./observables";
 
 const openskyURL = "https://opensky-network.org/api/states/all?";
 const markers = [];
-const flightData = [];
+let flightData = JSON.parse(localStorage.getItem("flightInfoStore"));
 
 //Initialising the leaflet map
 export const map = L.map("map", {
@@ -18,9 +11,33 @@ export const map = L.map("map", {
   zoomControl: false,
 });
 
+//FlightDataOffline
+function offlineFlightData() {
+  let count = 0;
+  for (let flight of flightData) {
+    //GUARD CLAUSE
+    if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
+      continue;
+    //Add it to flight data
+    flightData.push(flight);
+    //Add it to local storage
+    localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
+    //Add it as a marker
+    setFlightMarkers(flight, count);
+    //Add it as a button
+    createNewFlightButt(flight);
+
+    if (count == 19) {
+      break;
+    }
+  }
+}
+
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
   let count = 0;
+  flightData = [];
+  document.getElementById("buttList").innerHTML = ``;
   for (let flight of flights.states) {
     //GUARD CLAUSE
     if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
@@ -61,7 +78,7 @@ function createNewFlightButt(flight) {
   flightButt.addEventListener("click", () =>
     getPosFromCallsign(flightButt.innerText, map)
   );
-  document.getElementById("mySidebar").appendChild(flightButt);
+  document.getElementById("buttList").appendChild(flightButt);
 }
 
 //drawing the map
@@ -94,3 +111,5 @@ function getPosFromCallsign(callsign) {
 function flyToOnClick(lat, long) {
   map.flyTo([lat, long], 8);
 }
+
+export { drawMap, getPosFromCallsign, flyToOnClick, offlineFlightData };

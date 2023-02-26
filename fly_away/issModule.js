@@ -1,6 +1,5 @@
-export { createISSMarker };
-import { issPos$ } from "./issObs";
 import { map } from "./mapModule";
+import { issPos$ } from "./observables";
 
 const markerISS = L.marker([0, 0]);
 
@@ -39,3 +38,5 @@ function flyToISSOnClick() {
   const latLong = markerISS.getLatLng();
   map.flyTo([latLong.lat, latLong.lng], 8);
 }
+
+export { createISSMarker };

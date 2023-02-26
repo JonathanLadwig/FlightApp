@@ -11,8 +11,10 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.scss">
+  <!-- <link rel="stylesheet" href="styles.scss"> -->
+  <link rel="stylesheet" href="./dist/output.css">
   <!-- Import Navigation -->
+  <script type="text/javascript" src="navigationBar.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite App</title>
@@ -29,26 +31,13 @@
   </div>
 
   <!-- Sidebar Code From W3 Schools: www.w3schools.com/howto/howto_js_collapse_sidebar.asp -->
-  <div id="mySidebar" class="sidebar">
+  <div id="mySidebar" class="sidebar bg-blue-800">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="#">Flight List:</a>
+    <div id="buttList" class="flightButtonList bg-sky-900">Buttlist</div>
   </div>
 
   <script type="module" src="/main.js"></script>
-
-  <script>
-    function openNav() {
-      document.getElementById("mySidebar").style.width = "30vw";
-      document.getElementById("main").style.marginLeft = "30vw";
-      document.getElementById("sidebutt").style.color = "rgba(0, 0, 0, 0)";
-    }
-
-    function closeNav() {
-      document.getElementById("mySidebar").style.width = "0";
-      document.getElementById("main").style.marginLeft = "0";
-      document.getElementById("sidebutt").style.color = "rgba(0, 0, 0, 1)";
-    }</script>
-
   <div id="map"></div>
 </body>
 
