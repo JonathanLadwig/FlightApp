@@ -21,8 +21,6 @@ function offlineFlightData() {
       continue;
     //Add it to flight data
     flightData.push(flight);
-    //Add it to local storage
-    localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
     //Add it as a marker
     setFlightMarkers(flight, count);
     //Add it as a button
@@ -38,6 +36,7 @@ function offlineFlightData() {
 flightPositions$.subscribe((flights) => {
   let count = 0;
   flightData = [];
+  markers = [];
   document.getElementById("buttList").innerHTML = ``;
   for (let flight of flights.states) {
     //GUARD CLAUSE
