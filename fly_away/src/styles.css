@@ -47,8 +47,7 @@
 }
 
 .logo {
-  height: 64px;
-  width: 64px;
+  height: auto;
 }
 
 a {
@@ -74,7 +73,6 @@ a {
   padding: 8px 8px 8px 8px;
   text-align: center;
   text-decoration: none;
-  font-size: 1rem;
   color: black;
   background-color: whitesmoke;
   display: block;
