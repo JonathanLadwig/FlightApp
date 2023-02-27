@@ -20,8 +20,7 @@ export const flightPositions$ = fromFetch(openskyURL).pipe(
       return response.json();
     } else if (localStorage.getItem("flightInfoStore")) {
       console.log("Failsafe");
-      console.log(JSON.parse(localStorage.getItem("flightInfoStore")));
-      return "f";
+      return of("f");
     } else {
       // Server is returning a status requiring the client to try something else.
       console.log("Error");

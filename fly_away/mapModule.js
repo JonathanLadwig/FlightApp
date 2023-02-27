@@ -16,26 +16,19 @@ flightPositions$.subscribe((flights) => {
   if (flights === "f") {
     flights = JSON.parse(localStorage.getItem("flightInfoStore"));
   }
-  let count = 0;
   markers = [];
   console.log(flights);
   document.getElementById("buttList").innerHTML = ``;
-  for (let flight of flights.states) {
-    //GUARD CLAUSE
-    if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
-      continue;
-    //Add it to flight data
-    flightData.push(flight);
+  flightData = flights.states
+    ?.filter(
+      (flight) => flight && flight[6] && flight[5] && flight[1] && flight[2]
+    )
+    .slice(0, 20);
+  for (let flight of flightData) {
     //Add it as a marker
-    setFlightMarkers(flight, count);
+    setFlightMarkers(flight, flight.index);
     //Add it as a button
     createNewFlightButt(flight);
-
-    count += 1;
-
-    if (count == 19) {
-      break;
-    }
   }
   //Store it as local storage
   localStorage.setItem("flightInfoStore", JSON.stringify(flights));
