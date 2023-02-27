@@ -11,30 +11,17 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
   <!-- Stylesheet -->
-  <!-- <link rel="stylesheet" href="styles.scss"> -->
   <link rel="stylesheet" href="./dist/output.css">
-  <!-- Import Navigation -->
-  <script type="text/javascript" src="navigationBar.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite App</title>
 </head>
 
 <body>
-  <!-- <div id="main">
-    <button id="sidebutt" title="open sidebar" onclick="openNav()">
-      <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em"
-        xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 96v64h448V96H32zm0 128v64h448v-64H32zm0 128v64h448v-64H32z"></path>
-      </svg>
-    </button>
-  </div> -->
-
-  <!-- Sidebar Code From W3 Schools: www.w3schools.com/howto/howto_js_collapse_sidebar.asp -->
-  <div id="mySidebar" class="sidebar bg-sky-800">
-    <!-- <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
+  <!-- Sidebar with list of flights -->
+  <div id="mySidebar" class="sidebar bg-sky-800 xs:w-24 sm:w-32 md:w-36 lg:w-48 xl:w-56">
     <div class="logo"><img src="./images/tailwind-logo.png" alt="Logo"></div>
-    <a href="#">Flights</a>
+    <a href="#">Flights:</a>
     <div id="buttList" class="flightButtonList"></div>
   </div>
 
