@@ -1,7 +1,7 @@
 import { flightPositions$ } from "./observables";
 
 let markers = [];
-let flightData = JSON.parse(localStorage.getItem("flightInfoStore"));
+let flightData = [];
 
 //Initialising the leaflet map
 export const map = L.map("map", {
@@ -10,33 +10,15 @@ export const map = L.map("map", {
   zoomControl: false,
 });
 
-//FlightDataOffline
-function offlineFlightData() {
-  let count = 0;
-  flightData = [];
-  markers = [];
-  for (let flight of flightData) {
-    //GUARD CLAUSE
-    if (!flight || !flight[6] || !flight[5] || !flight[1] || !flight[2])
-      continue;
-    //Add it to flight data
-    flightData.push(flight);
-    //Add it as a marker
-    setFlightMarkers(flight, count);
-    //Add it as a button
-    createNewFlightButt(flight);
-
-    if (count == 19) {
-      break;
-    }
-  }
-}
-
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
+  //Janky failsafe but it works!
+  if (flights === "f") {
+    flights = JSON.parse(localStorage.getItem("flightInfoStore"));
+  }
   let count = 0;
-  flightData = [];
   markers = [];
+  console.log(flights);
   document.getElementById("buttList").innerHTML = ``;
   for (let flight of flights.states) {
     //GUARD CLAUSE
@@ -44,8 +26,6 @@ flightPositions$.subscribe((flights) => {
       continue;
     //Add it to flight data
     flightData.push(flight);
-    //Add it to local storage
-    localStorage.setItem("flightInfoStore", JSON.stringify(flightData));
     //Add it as a marker
     setFlightMarkers(flight, count);
     //Add it as a button
@@ -57,6 +37,8 @@ flightPositions$.subscribe((flights) => {
       break;
     }
   }
+  //Store it as local storage
+  localStorage.setItem("flightInfoStore", JSON.stringify(flights));
 });
 
 //Flight Markers
@@ -112,4 +94,4 @@ function flyToOnClick(lat, long) {
   map.flyTo([lat, long], 8);
 }
 
-export { drawMap, getPosFromCallsign, flyToOnClick, offlineFlightData };
+export { drawMap, getPosFromCallsign, flyToOnClick };
