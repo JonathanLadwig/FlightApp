@@ -1,10 +1,11 @@
 import L from "leaflet";
-import { flightPositions$ } from "./observables";
+import { getFlights } from "./observables";
 import { IFlight } from "./src/models/IFlight";
 
 let markers: L.Marker[];
-let flightData: IFlight[];
+let flights: IFlight[];
 const buttList = document.getElementById("buttList");
+const flights$ = getFlights();
 
 //Initialising the leaflet map
 export const map = L.map("map", {
@@ -14,23 +15,20 @@ export const map = L.map("map", {
 });
 
 //OpenSkyAPI Subscriber
-flightPositions$.subscribe((flights) => {
+flights$.subscribe((flights) => {
   markers = [];
   console.log(flights);
   if (buttList) {
     buttList.innerHTML = ``;
   }
-  flightData = flights
-    ?.filter(
-      (flight: IFlight) => flight && flight.latitude && flight.longitude && flight.callsign && flight.origin
-    )
-    .slice(0, 20);
   let loopCounter: number = 0;
-  for (let flight of flightData) {
+  for (let flight of flights) {
     //Add it as a marker
     setFlightMarkers(flight, loopCounter);
     //Add it as a button
     createNewFlightButt(flight);
+    //increment loop
+    loopCounter++;
   }
   //Store it as local storage
   localStorage.setItem("flightInfoStore", JSON.stringify(flights));
@@ -38,14 +36,19 @@ flightPositions$.subscribe((flights) => {
 
 //Flight Markers
 function setFlightMarkers(flight: IFlight, i: number) {
-  markers.push(
-    L.marker([flight.latitude, flight.longitude])
-      .addTo(map)
-      .bindPopup(`Callsign: ${flight.callsign} <br/> Origin:${flight.origin}`)
-      .on("mouseover", () => markers[i].openPopup())
-      .on("mouseout", () => markers[i].closePopup())
-      .on("click", () => flyToOnClick(flight.latitude, flight.longitude))
-  );
+  if (flight?.latitude && flight?.longitude) {
+    const lat = flight.latitude;
+    const lng = flight.longitude;
+
+    markers.push(
+      L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(`Callsign: ${flight.callsign} <br/> Origin:${flight.origin}`)
+        .on("mouseover", () => markers[i].openPopup())
+        .on("mouseout", () => markers[i].closePopup())
+        .on("click", () => flyToOnClick(lat, lng))
+    );
+  }
 }
 
 //Add Flight as Button to Sidebar
@@ -77,8 +80,8 @@ function drawMap(map: L.Map) {
 
 //Converts callsign into a lat and long for zoom function
 function getPosFromCallsign(callsign: string) {
-  for (let flight of flightData) {
-    if (flight && flight.callsign.includes(callsign)) {
+  for (let flight of flights) {
+    if (flight?.callsign?.includes(callsign) && flight?.latitude && flight?.longitude) {
       flyToOnClick(flight.latitude, flight.longitude);
     }
   }
