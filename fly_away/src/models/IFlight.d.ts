@@ -1,4 +1,4 @@
-interface IFlight {
+export interface IFlight {
     icao24: string;
     callsign: string;
     origin: string;
@@ -19,4 +19,7 @@ interface IFlight {
     category: number;
 }
 
-export { IFlight };
+export interface IFLightAPIResponse {
+    time: string;
+    states: (string | number | boolean | number[])[][];
+}

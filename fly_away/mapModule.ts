@@ -15,25 +15,23 @@ export const map = L.map("map", {
 
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
-  markers = [];
   console.log(flights);
+  markers = [];
   if (buttList) {
     buttList.innerHTML = ``;
   }
-  flightData = flights
-    ?.filter(
-      (flight: IFlight) => flight && flight.latitude && flight.longitude && flight.callsign && flight.origin
-    )
-    .slice(0, 20);
   let loopCounter: number = 0;
-  for (let flight of flightData) {
+  for (let flight of flights) {
+    console.log(flight);
     //Add it as a marker
     setFlightMarkers(flight, loopCounter);
     //Add it as a button
     createNewFlightButt(flight);
+    //Loop Counter
+    loopCounter++;
   }
   //Store it as local storage
-  localStorage.setItem("flightInfoStore", JSON.stringify(flights));
+  if (flights) localStorage.setItem("flightInfoStore", JSON.stringify(flights));
 });
 
 //Flight Markers
