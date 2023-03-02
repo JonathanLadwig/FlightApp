@@ -15,14 +15,12 @@ export const map = L.map("map", {
 
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
-  console.log(flights);
   markers = [];
   if (buttList) {
     buttList.innerHTML = ``;
   }
   let loopCounter: number = 0;
   for (let flight of flights) {
-    console.log(flight);
     //Add it as a marker
     setFlightMarkers(flight, loopCounter);
     //Add it as a button

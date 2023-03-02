@@ -1,4 +1,4 @@
-import L from "leaflet";
+import L, { LatLng } from "leaflet";
 import { map } from "./mapModule";
 import { issPos$ } from "./observables";
 
@@ -17,9 +17,10 @@ let polyLine: L.Polyline;
 
 //Subscriber that listens to signal from issObs(observable) for a change in position then uses it to set the position of the marker.
 issPos$.subscribe((pos) => {
-  if (!pos || !pos.lat || !pos.lng) return;
-  historyOfPos.push(new L.LatLng(pos.lat, pos.lng));
-  markerISS.setLatLng([pos.lat, pos.lng]);
+  if (!pos || !pos.latitude || !pos.longitude) return;
+  const latiLong = new LatLng(pos.latitude, pos.longitude)
+  historyOfPos.push(latiLong);
+  markerISS.setLatLng(latiLong);
   localStorage.setItem("polyLine", JSON.stringify(historyOfPos));
   if (polyLine) {
     map.removeLayer(polyLine);
