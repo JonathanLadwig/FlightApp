@@ -48,11 +48,9 @@ export const flightPositions$: Observable<IFlight[]> =
       }
       ).catch((err) => {
         if (localStorage.getItem("flightInfoStore")) {
-          console.log("Backup");
           const localStore = localStorage.getItem("flightInfoStore");
           return JSON.parse(localStore || "") as unknown as Promise<IFlight[]>
         } else {
-          console.log("Error");
           console.error(err);
           throw new Error(err.toString())
         }
