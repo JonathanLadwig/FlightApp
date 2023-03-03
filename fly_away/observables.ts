@@ -13,12 +13,15 @@ export const issPos$: Observable<IISSAPIResponse> = timer(0, 5000).pipe(
   )
 );
 
+//Takes the API call if successful and converts it to type of IFLight, checking if the data that we use is there. 
+//If it fails it will look for a backup. 
+//If no backup is avaliable it will throw an error.
 export const flightPositions$: Observable<IFlight[]> =
   timer(0, 100000000).pipe(switchMap(() =>
     fetch(openskyURL)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("OOPS! We seem to have trouble connecting to the API... How embarrising");
+          throw new Error("Cannot connect to the API Server");
         }
         return response.json() as Promise<IFLightAPIResponse>;
       })
@@ -52,6 +55,7 @@ export const flightPositions$: Observable<IFlight[]> =
           return JSON.parse(localStore || "") as unknown as Promise<IFlight[]>
         } else {
           console.error(err);
+          alert("OOPS! We seem to have trouble connecting to the API... How embarrising");
           throw new Error(err.toString())
         }
       })
