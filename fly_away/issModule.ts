@@ -32,7 +32,7 @@ issPos$.subscribe((pos) => {
 function createISSMarker(map: L.Map) {
   markerISS.addTo(map);
   markerISS.on("click", () => flyToISSOnClick());
-  markerISS.bindPopup("<b>ISS Location:</b>");
+  markerISS.bindPopup("<b>ISS Location</b>");
   markerISS.on("mouseover", () => markerISS.openPopup());
   markerISS.on("mouseout", () => markerISS.closePopup());
 }

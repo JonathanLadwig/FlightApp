@@ -1,7 +1,9 @@
 import { Observable, timer } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { concatMap, switchMap } from "rxjs/operators";
-import { IFlight, IFLightAPIResponse, IISSAPIResponse } from "./src/models/IFlight";
+import { IFlight } from "./src/models/IFlight";
+import { IFLightAPIResponse } from "./src/models/IFlightAPIResponse";
+import { IISSAPIResponse } from "./src/models/IISSResponse";
 
 const issURL = `https://api.wheretheiss.at/v1/satellites/25544`;
 const openskyURL = "https://opensky-network.org/api/states/all";

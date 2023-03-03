@@ -18,29 +18,3 @@ export interface IFlight {
     position_source: number;
     category: number;
 }
-
-export interface IFLightAPIResponse {
-    time: string;
-    states: (string | number | boolean | number[])[][];
-}
-
-export interface IISSAPIResponse {
-    name: string;
-    id: number;
-    latitude: number;
-    longitude: number;
-    altitude: number;
-    velocity: number;
-    visibility: string;
-    footprint: number;
-    timestamp: number;
-    daynum: number;
-    solar_lat: number;
-    solar_lon: number;
-    units: string;
-}
-
-export interface IFlightMarker {
-    planeMarker: L.Marker;
-    plane: IFlight;
-}
