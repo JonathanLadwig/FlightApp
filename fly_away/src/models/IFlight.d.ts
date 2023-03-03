@@ -39,3 +39,8 @@ export interface IISSAPIResponse {
     solar_lon: number;
     units: string;
 }
+
+export interface IFlightMarker {
+    planeMarker: L.Marker;
+    plane: IFlight;
+}

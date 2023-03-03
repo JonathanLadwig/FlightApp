@@ -1,10 +1,11 @@
 import L from "leaflet";
 import { flightPositions$ } from "./observables";
-import { IFlight } from "./src/models/IFlight";
+import { IFlight, IFlightMarker } from "./src/models/IFlight";
 
-let markers: L.Marker[];
 let flightData: IFlight[];
 const buttList = document.getElementById("buttList");
+let flightMarkers: IFlightMarker[];
+let selectedFlight: IFlightMarker;
 
 //Initialising the leaflet map
 export const map = L.map("map", {
@@ -15,12 +16,14 @@ export const map = L.map("map", {
 
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
-  markers = [];
+  flightData = [];
+  flightMarkers = [];
   if (buttList) {
     buttList.innerHTML = ``;
   }
   let loopCounter: number = 0;
   for (let flight of flights) {
+    flightData.push(flight);
     //Add it as a marker
     setFlightMarkers(flight, loopCounter);
     //Add it as a button
@@ -34,14 +37,14 @@ flightPositions$.subscribe((flights) => {
 
 //Flight Markers
 function setFlightMarkers(flight: IFlight, i: number) {
-  markers.push(
-    L.marker([flight.latitude, flight.longitude])
-      .addTo(map)
-      .bindPopup(`Callsign: ${flight.callsign} <br/> Origin:${flight.origin}`)
-      .on("mouseover", () => markers[i].openPopup())
-      .on("mouseout", () => markers[i].closePopup())
-      .on("click", () => flyToOnClick(flight.latitude, flight.longitude))
-  );
+  const marker: L.Marker = new L.Marker([flight.latitude, flight.longitude]);
+  const flightMarker: IFlightMarker = { planeMarker: marker, plane: flight };
+  flightMarker.planeMarker.addTo(map)
+    .bindPopup(`Callsign: ${flight.callsign} <br/> Origin: ${flight.origin} <br/> Baro-Altitude: ${Math.round(flight.baro_altitude / 10) / 100}km`)
+    .on("mouseover", () => flightMarkers[i].planeMarker.openPopup())
+    .on("mouseout", () => flightMarkers[i].planeMarker.closePopup())
+    .on("click", () => flyToOnClick(flight.latitude, flight.longitude))
+  flightMarkers.push(flightMarker);
 }
 
 //Add Flight as Button to Sidebar
@@ -52,6 +55,12 @@ function createNewFlightButt(flight: IFlight) {
     getPosFromCallsign(flightButt.innerText)
   );
   if (buttList) buttList.appendChild(flightButt);
+}
+
+function removeLowerCase(str: string): string {
+  let pattern = new RegExp("[a-z]", 'g');
+  str = str.replace(pattern, "");
+  return str.replace(" ", "");
 }
 
 //drawing the map
@@ -73,9 +82,9 @@ function drawMap(map: L.Map) {
 
 //Converts callsign into a lat and long for zoom function
 function getPosFromCallsign(callsign: string) {
-  for (let flight of flightData) {
-    if (flight && flight.callsign.includes(callsign)) {
-      flyToOnClick(flight.latitude, flight.longitude);
+  for (let flight of flightMarkers) {
+    if (flight && flight.plane.callsign.includes(callsign)) {
+      flyToOnClick(flight.plane.latitude, flight.plane.longitude);
     }
   }
 }
@@ -85,8 +94,18 @@ function flyToOnClick(lat: number, long: number) {
   map.flyTo([lat, long], 8);
 }
 
-function getAircraftType(typeNum: number) {
-  //Map it to an enum instead
+function getAircraftType(typeNum: number): L.DivIcon {
+  const aircraftIcon = new L.DivIcon({
+    iconUrl: "./images/planeicon.png",
+    iconRetinaUrl: "./images/planeicon.png",
+    iconSize: [38, 95],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+    shadowUrl: './images/planeicon.png',
+    shadowSize: [68, 95],
+    shadowAnchor: [22, 94]
+  });
+  //Map it to an enum instead maybe?
   switch (typeNum) {
     case 1:
       console.log("No ADS-B Emitter Category Information.");
@@ -152,6 +171,7 @@ function getAircraftType(typeNum: number) {
       console.log("No info");
       break;
   }
+  return aircraftIcon;
 }
 
 export { drawMap, getPosFromCallsign, flyToOnClick };
