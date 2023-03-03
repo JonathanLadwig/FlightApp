@@ -31,20 +31,6 @@
   width: 30vw;
 }
 
-#issButt {
-  border-top: 2px solid;
-  border-color: gray;
-}
-
-#main {
-  transition: margin-left 0.5s;
-  width: 2vw;
-  height: 2vh;
-  margin: 0px;
-  background-color: rgb(0, 0, 0, 0);
-  color: rgb(0, 0, 0, 0);
-}
-
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -55,27 +41,27 @@
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #152238;
   overflow-x: hidden;
   transition: 0.5s;
 }
 
-.closebtn {
-  align-self: flex-start;
-}
-
 .logo {
-  height: 64px;
-  width: 64px;
+  height: auto;
 }
 
 a {
+  font-family: Georgia, "Times New Roman", Times, serif;
   padding: 8px 8px 8px 8px;
   text-decoration: none;
   font-size: 1rem;
   color: whitesmoke;
   display: block;
   transition: 0.3s;
+}
+
+.sidebar .flightButtonList {
+  width: 80%;
+  height: auto;
 }
 
 .sidebar button {
@@ -86,7 +72,6 @@ a {
   padding: 8px 8px 8px 8px;
   text-align: center;
   text-decoration: none;
-  font-size: 1rem;
   color: black;
   background-color: whitesmoke;
   display: block;

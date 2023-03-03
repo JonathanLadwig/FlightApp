@@ -1,22 +1,26 @@
+import L, { LatLng } from "leaflet";
 import { map } from "./mapModule";
 import { issPos$ } from "./observables";
 
 const markerISS = L.marker([0, 0]);
 
+let historyOfPos: L.LatLng[];
+
 //get the history from local storage if it exists otherwise make an empty array
-const historyOfPos =
-  JSON.parse(
-    localStorage.getItem("polyLine")
-    // .filter(
-    //   (latlng) => latlng[0] && latlng[1]
+let polyLineStorage = JSON.parse(localStorage.getItem("polyLine") || "");
+if (polyLineStorage) {
+  historyOfPos = polyLineStorage.filter(
+    (latlng: L.LatLng) => latlng.lat && latlng.lng
   ) ?? [];
-let polyLine;
+}
+let polyLine: L.Polyline;
 
 //Subscriber that listens to signal from issObs(observable) for a change in position then uses it to set the position of the marker.
 issPos$.subscribe((pos) => {
   if (!pos || !pos.latitude || !pos.longitude) return;
-  historyOfPos.push([pos.latitude, pos.longitude]);
-  markerISS.setLatLng([pos.latitude, pos.longitude]);
+  const latiLong = new LatLng(pos.latitude, pos.longitude)
+  historyOfPos.push(latiLong);
+  markerISS.setLatLng(latiLong);
   localStorage.setItem("polyLine", JSON.stringify(historyOfPos));
   if (polyLine) {
     map.removeLayer(polyLine);
@@ -25,9 +29,9 @@ issPos$.subscribe((pos) => {
 });
 
 //ISS Marker
-function createISSMarker(map) {
+function createISSMarker(map: L.Map) {
   markerISS.addTo(map);
-  markerISS.on("click", () => flyToISSOnClick(map));
+  markerISS.on("click", () => flyToISSOnClick());
   markerISS.bindPopup("<b>ISS Location:</b>");
   markerISS.on("mouseover", () => markerISS.openPopup());
   markerISS.on("mouseout", () => markerISS.closePopup());
