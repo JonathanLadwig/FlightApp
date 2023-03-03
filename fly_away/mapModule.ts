@@ -1,8 +1,8 @@
+import * as lookup from 'country-code-lookup';
 import L from "leaflet";
 import { flightPositions$ } from "./observables";
 import { IFlight, IFlightMarker } from "./src/models/IFlight";
 
-let flightData: IFlight[];
 const buttList = document.getElementById("buttList");
 let flightMarkers: IFlightMarker[];
 let selectedFlight: IFlightMarker;
@@ -16,14 +16,12 @@ export const map = L.map("map", {
 
 //OpenSkyAPI Subscriber
 flightPositions$.subscribe((flights) => {
-  flightData = [];
   flightMarkers = [];
   if (buttList) {
     buttList.innerHTML = ``;
   }
   let loopCounter: number = 0;
   for (let flight of flights) {
-    flightData.push(flight);
     //Add it as a marker
     setFlightMarkers(flight, loopCounter);
     //Add it as a button
@@ -50,6 +48,7 @@ function setFlightMarkers(flight: IFlight, i: number) {
 //Add Flight as Button to Sidebar
 function createNewFlightButt(flight: IFlight) {
   const flightButt = document.createElement("button");
+  const country = lookup.byCountry(flight.origin);
   flightButt.innerText = `${flight.callsign}`;
   flightButt.addEventListener("click", () =>
     getPosFromCallsign(flightButt.innerText)
